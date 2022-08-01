@@ -7,7 +7,7 @@ import java.util.Objects;
 public class Customer {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
@@ -15,6 +15,15 @@ public class Customer {
 
     @Column(nullable = false)
     private String email;
+
+    public Customer() {
+
+    }
+
+    public Customer(String name, String email) {
+        this.name = name;
+        this.email = email;
+    }
 
     public Long getId() {
         return id;
