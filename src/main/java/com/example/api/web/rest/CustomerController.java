@@ -3,14 +3,12 @@ package com.example.api.web.rest;
 import com.example.api.dto.CustomerDTO;
 import com.example.api.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/customers")
@@ -24,8 +22,12 @@ public class CustomerController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CustomerDTO>> findAll() {
-        return ResponseEntity.status(HttpStatus.OK).body(service.findAll());
+    public ResponseEntity<Page<CustomerDTO>> findAll(@RequestParam(value = "page", defaultValue = "0") Integer page,
+                                                     @RequestParam(value = "size", defaultValue = "10") Integer linesPerPage,
+                                                     @RequestParam(value = "sort", defaultValue = "name") String orderBy,
+                                                     @RequestParam(value = "direction", defaultValue = "DESC") String direction) {
+        PageRequest pageable = PageRequest.of(page, linesPerPage, Sort.Direction.valueOf(direction), orderBy);
+        return ResponseEntity.status(HttpStatus.OK).body(service.findAll(pageable));
     }
 
     @GetMapping("/{id}")

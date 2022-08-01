@@ -6,8 +6,11 @@ import com.example.api.repository.CustomerRepository;
 import com.example.api.service.exception.ObjectNotFoundException;
 import com.example.api.util.FunctionsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.Converter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,14 +25,9 @@ public class CustomerService {
         this.repository = repository;
     }
 
-    public List<CustomerDTO> findAll() {
-        List<Customer> customers = repository.findAllByOrderByNameAsc();
-        if (FunctionsUtil.isEmpty(customers))
-            return new ArrayList<>();
-        return customers
-                .stream()
-                .map(customer -> new CustomerDTO(customer.getName(), customer.getEmail()))
-                .collect(Collectors.toList());
+    public Page<CustomerDTO> findAll(Pageable pageable) {
+        Page<Customer> customers = repository.findAll(pageable);
+        return customers.map(entity -> new CustomerDTO(entity.getName(), entity.getEmail()));
     }
 
     public CustomerDTO findById(Long id) {
