@@ -47,4 +47,24 @@ public class CustomerServiceImpl implements CustomerService {
         customer.setId(null);
         return repository.save(customer);
     }
+
+    @Override
+    public Customer updateCustomer(Customer customer) {
+        if (!repository.existsById(customer.getId())) {
+            throw new ObjectNotFoundException("Customer não encontrado");
+        }
+        Customer newObj = repository.findById(customer.getId()).get();
+        updateData(newObj, customer);
+        return repository.save(newObj);
+    }
+
+    @Override
+    public void deleteCustomer(Long customerId) {
+        repository.deleteById(customerId);
+    }
+
+    private void updateData(Customer newObj, Customer cliente) {
+        newObj.setName(cliente.getName());
+        newObj.setEmail(cliente.getEmail());
+    }
 }
