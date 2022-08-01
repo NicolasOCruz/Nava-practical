@@ -46,9 +46,15 @@ public class CustomerController {
 
     @PutMapping("/{customerId}")
     public ResponseEntity<Customer> updateCustomer(@Valid @RequestBody CustomerDTO customerDTO,
-                                                  @PathVariable Long customerId) {
+                                                   @PathVariable Long customerId) {
         Customer customerBD = service.fromDTO(customerDTO);
         customerBD.setId(customerId);
         return ResponseEntity.status(HttpStatus.OK).body(service.updateCustomer(customerBD));
+    }
+
+    @DeleteMapping("/{customerId}")
+    public ResponseEntity<Void> delete(@PathVariable Long customerId) {
+        service.deleteCustomer(customerId);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -11,6 +11,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class CustomerServiceImpl implements CustomerService {
 
@@ -50,21 +52,25 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Customer updateCustomer(Customer customer) {
-        if (!repository.existsById(customer.getId())) {
-            throw new ObjectNotFoundException("Customer não encontrado");
-        }
-        Customer newObj = repository.findById(customer.getId()).get();
+        Customer newObj = find(customer.getId());
         updateData(newObj, customer);
         return repository.save(newObj);
     }
 
     @Override
     public void deleteCustomer(Long customerId) {
+        find(customerId);
         repository.deleteById(customerId);
     }
 
     private void updateData(Customer newObj, Customer cliente) {
         newObj.setName(cliente.getName());
         newObj.setEmail(cliente.getEmail());
+    }
+
+    private Customer find(Long customerId) {
+        Optional<Customer> obj = repository.findById(customerId);
+        return obj.orElseThrow(() -> new ObjectNotFoundException(
+                "Customer não encontrado! Id: " + customerId));
     }
 }
