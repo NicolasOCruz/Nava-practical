@@ -1,8 +1,11 @@
 package com.example.api.service.impl;
 
+import com.example.api.domain.Address;
 import com.example.api.domain.Customer;
+import com.example.api.dto.AddressDTO;
 import com.example.api.dto.CustomerDTO;
 import com.example.api.repository.CustomerRepository;
+import com.example.api.service.AddressCustomerService;
 import com.example.api.service.CustomerService;
 import com.example.api.service.exception.DataIntegrityException;
 import com.example.api.service.exception.ObjectNotFoundException;
@@ -18,9 +21,12 @@ public class CustomerServiceImpl implements CustomerService {
 
     private CustomerRepository repository;
 
+    private AddressCustomerService addressCustomerService;
+
     @Autowired
-    public CustomerServiceImpl(CustomerRepository repository) {
+    public CustomerServiceImpl(CustomerRepository repository, AddressCustomerService addressCustomerService) {
         this.repository = repository;
+        this.addressCustomerService = addressCustomerService;
     }
 
     @Override
@@ -61,6 +67,17 @@ public class CustomerServiceImpl implements CustomerService {
     public void deleteCustomer(Long customerId) {
         find(customerId);
         repository.deleteById(customerId);
+    }
+
+    @Override
+    public Address addAddress(Long customerId, AddressDTO addressDTO) {
+        Address address = new Address(addressDTO.getStreet(),
+                addressDTO.getNumber(),
+                addressDTO.getComplement(),
+                addressDTO.getDistrict(),
+                addressDTO.getCep(),
+                find(customerId));
+        return addressCustomerService.addAddress(address);
     }
 
     private void updateData(Customer newObj, Customer cliente) {

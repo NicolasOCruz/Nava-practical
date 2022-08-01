@@ -1,6 +1,8 @@
 package com.example.api.domain;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -15,6 +17,9 @@ public class Customer {
 
     @Column(nullable = false)
     private String email;
+
+    @OneToMany(mappedBy = "customer", cascade=CascadeType.ALL)
+    private List<Address> addresses = new ArrayList<>();
 
     public Customer() {
 
@@ -47,6 +52,14 @@ public class Customer {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public List<Address> getAddresses() {
+        return addresses;
+    }
+
+    public void setAddresses(List<Address> addresses) {
+        this.addresses = addresses;
     }
 
     @Override

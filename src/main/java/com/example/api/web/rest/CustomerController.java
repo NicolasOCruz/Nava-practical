@@ -1,7 +1,10 @@
 package com.example.api.web.rest;
 
+import com.example.api.domain.Address;
 import com.example.api.domain.Customer;
+import com.example.api.dto.AddressDTO;
 import com.example.api.dto.CustomerDTO;
+import com.example.api.service.AddressCustomerService;
 import com.example.api.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,6 +21,7 @@ import javax.validation.Valid;
 public class CustomerController {
 
     private CustomerService service;
+    private AddressCustomerService addressCustomerService;
 
     @Autowired
     public CustomerController(CustomerService service) {
@@ -55,6 +59,12 @@ public class CustomerController {
     @DeleteMapping("/{customerId}")
     public ResponseEntity<Void> delete(@PathVariable Long customerId) {
         service.deleteCustomer(customerId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @PostMapping("/{customerId}/addresses")
+    public ResponseEntity<Address> addAddress(@PathVariable Long customerId,
+                                              @Valid @RequestBody AddressDTO addressDTO) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.addAddress(customerId, addressDTO));
     }
 }
